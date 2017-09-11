@@ -1,0 +1,42 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="Numbers.ttinclude" #>
+using System;
+
+namespace CommonExtensions
+{
+    public static partial class ThrowExt
+    {
+<#	foreach (var ti in Numerics) { 
+		var t = ti.Name;#>
+		/// <summary>
+        /// Throws an ArgumentOutOfRangeException if the value is less than zero.
+        /// </summary>
+        /// <param name="argument">The value to test</param>
+        /// <param name="name">The name of the value, for the exception</param>
+        public static void ThrowIfNegative(this <#=t#> argument, string name)
+        {
+            if (argument < 0)
+            {
+                throw new ArgumentOutOfRangeException(name);
+            }
+        }
+
+        /// <summary>
+        /// Throws an ArgumentOutOfRangeException if the value is less than or equal to zero.
+        /// </summary>
+        /// <param name="argument">The value to test</param>
+        /// <param name="name">The name of the value, for the exception</param>
+        public static void ThrowIfNonPositive(this <#=t#> argument, string name)
+        {
+            if (argument <= 0)
+            {
+                throw new ArgumentOutOfRangeException(name);
+            }
+        }
+
+<#	} #>
+    }
+}

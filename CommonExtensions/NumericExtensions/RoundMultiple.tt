@@ -1,0 +1,57 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="Numbers.ttinclude" #>
+using System;
+
+namespace CommonExtensions.NumericExtensions
+{
+    public static partial class NumericEx
+    {
+<#	foreach (var ti in Numerics) { 
+        var t = ti.Name;#>
+        /// <summary>Rounds up to the next higher number that is a multiple of the value given.</summary>
+        /// <param name="value">The initial value to be rounded.</param>
+        /// <param name="multiple">The multiple to use as a basis for rounding.</param>
+        /// <returns>A value that is a multiple of <see cref="multiple"/> that is higher than <see cref="value"/>.</returns>
+        public static <#=t#> RoundHigherMultiple(this <#=t#> value, <#=t#> multiple)
+        {
+            return (<#=t#>)(Math.Ceiling(<#GetCastingType(t);#>value / multiple) * multiple);
+        }
+
+        /// <summary>Rounds down to the next lower number that is a multiple of the value given.</summary>
+        /// <param name="value">The initial value to be rounded.</param>
+        /// <param name="multiple">The multiple to use as a basis for rounding.</param>
+        /// <returns>A value that is a multiple of <see cref="multiple"/> that is lower than <see cref="value"/>.</returns>
+        public static <#=t#> RoundLowerMultiple(this <#=t#> value, <#=t#> multiple)
+        {
+            return (<#=t#>)(Math.Floor(<#GetCastingType(t);#>value / multiple) * multiple);
+        }
+
+        /// <summary>Rounds to the nearest number that is a multiple of the value given.</summary>
+        /// <param name="value">The initial value to be rounded.</param>
+        /// <param name="multiple">The multiple to use as a basis for rounding.</param>
+        /// <returns>A value that is a multiple of <see cref="multiple"/> that is nearest to <see cref="value"/>.</returns>
+        public static <#=t#> RoundNearestMultiple(this <#=t#> value, <#=t#> multiple)
+        {
+            return (<#=t#>)(Math.Round(<#GetCastingType(t);#>value / multiple, MidpointRounding.AwayFromZero) * multiple);
+        }
+
+<#	} #>
+    }
+}
+
+<#+
+    void GetCastingType(string type) {
+        switch (type)
+        {
+            case "Double":
+            case "Decimal":
+                break;
+            default:
+                Write("(double)");
+                break;
+        } 
+    }
+#>

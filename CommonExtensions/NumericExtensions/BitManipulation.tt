@@ -1,0 +1,87 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="Numbers.ttinclude" #>
+using System;
+
+namespace CommonExtensions.NumericExtensions
+{
+    public static partial class NumericEx
+    {
+<#	foreach (var ti in Numerics) { 
+    if(IsIntegral(ti.Name)) {#>
+        public static <#=ti.Name#> RotateLeft(this <#=ti.Name#> value, int count)
+        {
+            return (<#=ti.Name#>)((value << count) | (value >> (<#=ti.Size#> - count)));
+        }
+
+        public static <#=ti.Name#> RotateRight(this <#=ti.Name#> value, int count)
+        {
+            return (<#=ti.Name#>)((value >> count) | (value << (<#=ti.Size#> - count)));
+        }
+
+<#  } } #>
+<#	foreach (var ti in Numerics) { 
+    if(IsIntegral(ti.Name)) {#>
+        public static <#=ti.Name#> Scramble(this <#=ti.Name#> value)
+        {
+            unchecked 
+            {
+                ulong n = (ulong)value;
+                n = (n ^ 524287) ^ (n >> <#=ti.Size / 2#>);
+                n = n + (n << 3);
+                n = n ^ (n >> 4);
+                n = n * 24036583;
+                n = n ^ (n >> <#=ti.Size / 2 - 1#>);
+                value = (<#=ti.Name#>)n;
+            }
+            return value;
+        }
+
+<#  } } #>
+<#	foreach (var ti in Numerics) { 
+    if(IsIntegral(ti.Name)) {#>
+        public static string WriteBinary(this <#=ti.Name#> value)
+        {
+<#			if(ti.Name == "UInt64") { #>
+            return (Convert.ToString((long)(value >> 32), 2)
+                   +Convert.ToString((long)(value & 0x00000000FFFFFFFF), 2))
+                   .PadLeft(64, '0');
+<#			} else { #> 
+            return Convert.ToString(value, 2).PadLeft(<#=ti.Size#>, '0');
+<#			} #>
+        }
+
+<#  } } #>
+<#	foreach (var ti in Numerics) { 
+    if(IsIntegral(ti.Name)) {#>
+        public static int BitCount(this <#=ti.Name#> value)
+        {
+            int count = 0;
+            while (value != 0)
+            {
+                count++;
+                value &= (<#=ti.Name#>)(value - 1);
+            }
+            return count;
+        }
+
+<#  } } #>
+    }
+}
+
+<#+
+    void GetCastingType(string type) {
+        switch (type)
+        {
+            case "SByte":
+            case "Byte":
+            case "UInt16":
+                Write("(int)");
+                break;
+            default:
+                break;
+        } 
+    }
+#>

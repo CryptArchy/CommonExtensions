@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF83E3D1-FC8F-486B-BE9D-384558AE86DB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CommonExtensions</RootNamespace>
+    <AssemblyName>CommonExtensions</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">V20</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.0' ">V30</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">V35</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">V40</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">V45</CustomConstants>
+    <DefineConstants>$(DefineConstants);$(CustomConstants)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">V20</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.0' ">V30</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">V35</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">V40</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">V45</CustomConstants>
+    <DefineConstants>$(DefineConstants);$(CustomConstants)</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_NoPackage|AnyCPU'">
+    <OutputPath>bin\Release_NoPackage\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v2.0' ">V20</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.0' ">V30</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v3.5' ">V35</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.0' ">V40</CustomConstants>
+    <CustomConstants Condition=" '$(TargetFrameworkVersion)' == 'v4.5' ">V45</CustomConstants>
+    <DefineConstants>$(DefineConstants);$(CustomConstants)</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="Delegates.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Delegates.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DynamicQueryable.cs" />
+    <Compile Include="EnumerableExtensions\Chunk.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EnumerableExtensions\Consume.cs" />
+    <Compile Include="EnumerableExtensions\ForEach.cs" />
+    <Compile Include="EnumerableExtensions\Concat.cs" />
+    <Compile Include="EnumerableExtensions\Generate.cs" />
+    <Compile Include="EnumerableExtensions\NestedLoops.cs" />
+    <Compile Include="EnumerableExtensions\Permutations.cs" />
+    <Compile Include="EnumerableExtensions\Repeat.cs" />
+    <Compile Include="EnumerableExtensions\ZipTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZipTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HashExtensions.cs" />
+    <Compile Include="NumericExtensions.cs" />
+    <Compile Include="NumericExtensions\BitManipulation.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BitManipulation.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NumericExtensions\RoundMultiple.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RoundMultiple.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NumericExtensions\ToText.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ToText.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EnumerableExtensions\Tails.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="NumericExtensions\ThrowNumericExt.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ThrowNumericExt.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TaskExtensions.cs" />
+    <Compile Include="ThrowExtensions.cs" />
+    <Compile Include="EnumerableExtensions\Zip.cs" />
+    <Compile Include="TypeExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CommonExtensions.nuspec" />
+    <None Include="Delegates.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Delegates.cs</LastGenOutput>
+    </None>
+    <None Include="EnumerableExtensions\ZipTemplate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ZipTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="NumericExtensions\BitManipulation.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>BitManipulation.cs</LastGenOutput>
+    </None>
+    <None Include="NumericExtensions\Numbers.ttinclude" />
+    <None Include="NumericExtensions\RoundMultiple.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RoundMultiple.cs</LastGenOutput>
+    </None>
+    <None Include="NumericExtensions\ToText.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ToText.cs</LastGenOutput>
+    </None>
+    <None Include="NumericExtensions\ThrowNumericExt.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ThrowNumericExt.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <Target Name="AfterBuild" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="CurrentAssembly" />
+    </GetAssemblyIdentity>
+    <ItemGroup>
+      <Command Include="&quot;$(SolutionDir)Build\NuGet.exe&quot; pack &quot;$(ProjectPath)&quot; -OutputDirectory &quot;$(TargetDir)\&quot; -Properties Configuration=$(ConfigurationName)" />
+      <Command Include="&quot;$(SolutionDir)Build\CopyIfDiff.bat&quot; &quot;$(TargetDir)$(TargetName).%(CurrentAssembly.Version).nupkg&quot; &quot;G:\Actuarial\Nuget\$(TargetName).%(CurrentAssembly.Version).nupkg&quot;" />
+    </ItemGroup>
+    <Exec Command="%(Command.Identity)" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

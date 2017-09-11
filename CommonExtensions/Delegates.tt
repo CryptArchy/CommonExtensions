@@ -1,0 +1,55 @@
+﻿<#@ template  debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Windows.Forms" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="NumericExtensions\Numbers.ttinclude" #>
+#if V20 || V30 || V35
+<# for(int i = 5; i < 17; i++) { #>
+/// <summary>Encapsulates a method that has <#=NumberToText(i).ToLower()#> parameters and returns a value of the type specified by the TResult parameter.</summary>
+<# for(int j = 1; j <= i; j++) { #>
+/// <typeparam name="T<#=j#>">The type of the <#=NumberToOrdinalText(j).ToLower()#> parameter of the method that this delegate encapsulates.</typeparam>
+<#}#>
+/// <typeparam name="TResult">The type of the return value of the method that this delegate encapsulates.</typeparam>
+<# for(int j = 1; j <= i; j++) { #>
+/// <param name="arg<#=j#>">The <#=NumberToOrdinalText(j).ToLower()#> parameter of the method that this delegate encapsulates.</param>
+<#}#>
+/// <returns>The return value of the method that this delegate encapsulates.</returns>
+public delegate TResult Func<<#WriteGenericParamNames(i);#>, TResult>(<#WriteParamNames(i);#>);
+<#}#>
+
+<# for(int i = 5; i < 17; i++) { #>
+/// <summary>Encapsulates a method that has <#=NumberToText(i).ToLower()#> parameters and does not return a value.</summary>
+<# for(int j = 1; j <= i; j++) { #>
+/// <typeparam name="T<#=j#>">The type of the <#=NumberToOrdinalText(j).ToLower()#> parameter of the method that this delegate encapsulates.</typeparam>
+<#}#>
+<# for(int j = 1; j <= i; j++) { #>
+/// <param name="arg<#=j#>">The <#=NumberToOrdinalText(j).ToLower()#> parameter of the method that this delegate encapsulates.</param>
+<#}#>
+public delegate void Action<<#WriteGenericParamNames(i);#>>(<#WriteParamNames(i);#>);
+<#}#>
+#endif
+<#+
+void WriteGenericParamNames(int count)
+{
+	var varNames = new string[count];
+	for (int i = 0; i < count; i++) { 
+		varNames[i] ="T" + (i+1);
+	}
+	Write(string.Join(", ", varNames));
+}
+
+void WriteParamNames(int count)
+{
+	var varNames = new string[count];
+	for (int i = 0; i < count; i++) { 
+		varNames[i] = string.Format("T{0} arg{0}", i+1);
+	}
+	Write(string.Join(", ", varNames));
+}
+#>

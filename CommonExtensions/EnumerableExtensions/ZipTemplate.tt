@@ -1,0 +1,406 @@
+﻿<#@ template debug="true" hostSpecific="true" #>
+<#@ output extension=".cs" #>
+<#@ Assembly Name="System.Core" #>
+<#@ Assembly Name="System.Windows.Forms" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ include file="..\NumericExtensions\Numbers.ttinclude" #>
+using System;
+using System.Collections.Generic;
+
+namespace CommonExtensions.EnumerableExtensions
+{
+    public static partial class EnumerableExt
+    {
+<#	foreach(var count in Enumerable.Range(2,9)) { #>
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, the result sequence is terminated as soon as the shortest input sequence is exhausted.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipShortest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipShortest<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Truncate);
+        }
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, then <see cref="InvalidOperationException"/> is thrown.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipEven(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipEven<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Fail);
+        }
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, then the result sequence will always be as long as the longest of the input sequences.
+        /// The default values of the shorter sequence element types are used for padding.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipLongest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipLongest<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Pad);
+        }
+
+		private static IEnumerable<TResult> ZipIter<<#WriteGenericVarNames(count);#>TResult>(<#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>TResult> resultSelector, ImbalancedZipStrategy imbalanceStrategy)
+        {
+<#			WriteParamUsings(count);#>
+            {
+                bool end;
+				bool fail;
+
+<#				WriteVarDecls(count);#>
+
+                while (true)
+                {
+                    end = true;
+					fail = false;
+
+<#					for(int i = 1; i <= count; i++) {#>
+
+                    if (e<#=i#>.MoveNext())
+                    {
+                        v<#=i#> = e<#=i#>.Current;
+                        end = false;
+                    }
+                    else
+                    {
+                        switch (imbalanceStrategy)
+                        {
+                            case ImbalancedZipStrategy.Fail:
+								fail = true;
+								break;
+                            case ImbalancedZipStrategy.Truncate:
+                                yield break;
+                            case ImbalancedZipStrategy.Pad:
+								v<#=i#> = default(T<#=NumberToOrdinalText(i)#>);
+                                break;
+                        }
+                    }
+<#					}#>
+
+					if (end)
+						yield break;
+					else if (fail)
+						throw new InvalidOperationException("Sequences were not all same length.");
+					else
+						yield return resultSelector(<#WriteVars(count);#>);
+                }
+            }            
+        }
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, the result sequence is terminated as soon as the shortest input sequence is exhausted.
+		/// A global index over all sequences is passed into the result selector function.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipShortest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipShortest<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>int, TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Truncate);
+        }
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, then <see cref="InvalidOperationException"/> is thrown.
+		/// A global index over all sequences is passed into the result selector function.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipEven(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipEven<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>int, TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Fail);
+        }
+
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, then the result sequence will always be as long as the longest of the input sequences.
+        /// The default values of the shorter sequence element types are used for padding.
+		/// A global index over all sequences is passed into the result selector function.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipLongest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> ZipLongest<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>int, TResult> resultSelector)
+        {
+<#			WriteParamContracts(count);#>
+            resultSelector.ThrowIfNull("resultSelector");
+
+            return ZipIter(<#WriteParamNames(count);#>resultSelector, ImbalancedZipStrategy.Pad);
+        }
+
+		private static IEnumerable<TResult> ZipIter<<#WriteGenericVarNames(count);#>TResult>(<#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>int, TResult> resultSelector, ImbalancedZipStrategy imbalanceStrategy)
+        {
+			var count = 0;
+<#			WriteParamUsings(count);#>
+            {
+                bool end;
+				bool fail;
+
+<#				WriteVarDecls(count);#>
+
+                while (true)
+                {
+                    end = true;
+					fail = false;
+
+<#					for(int i = 1; i <= count; i++) {#>
+
+                    if (e<#=i#>.MoveNext())
+                    {
+                        v<#=i#> = e<#=i#>.Current;
+                        end = false;
+                    }
+                    else
+                    {
+                        switch (imbalanceStrategy)
+                        {
+                            case ImbalancedZipStrategy.Fail:
+                                fail = true;
+								break;
+                            case ImbalancedZipStrategy.Truncate:
+                                yield break;
+                            case ImbalancedZipStrategy.Pad:
+								v<#=i#> = default(T<#=NumberToOrdinalText(i)#>);
+                                break;
+                        }
+                    }
+<#					}#>
+
+					if (end)
+						yield break;
+					else if (fail)
+						throw new InvalidOperationException("Sequences were not all same length.");
+					else
+						yield return resultSelector(<#WriteVars(count);#>, count++);
+                }
+            }            
+        }
+<#}#>
+
+<# foreach(var count in Enumerable.Range(2,9)) { #>
+#if V20 || V30 || V35
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, the result sequence is terminated as soon as the shortest input sequence is exhausted.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipShortest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<# for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> Zip<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>TResult> resultSelector)
+        {
+			return ZipShortest(<#WriteParamNames(count);#>resultSelector);
+        }
+#endif
+		/// <summary>Returns a projection of tuples, where each tuple contains the N-th element from each of the argument sequences.</summary>
+        /// <remarks>
+        /// If the <#=NumberToText(count).ToLower()#> input sequences are of different lengths, the result sequence is terminated as soon as the shortest input sequence is exhausted.
+		/// A global index over all sequences is passed into the result selector function.
+        /// This operator uses deferred execution and streams its results.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// int[] numbers = { 1, 2, 3 };
+        /// string[] letters = { "A", "B", "C", "D" };
+        /// var zipped = numbers.ZipShortest(letters, (n, l) => n + l);
+        /// </code>
+        /// The <c>zipped</c> variable, when iterated over, will yield "1A", "2B", "3C", in turn.
+        /// </example>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <typeparam name="T<#=NumberToOrdinalText(j)#>">Type of elements in the <#=NumberToOrdinalText(j).ToLower()#> sequence.</typeparam>
+<#		}#>
+		/// <typeparam name="TResult">Type of elements in result sequence</typeparam>
+<#		for(int j = 1; j <= count; j++) { #>
+		/// <param name="<#=NumberToOrdinalText(j).ToLower()#>"><#=NumberToOrdinalText(j)#> sequence</param>
+<#		}#>
+		/// <param name="resultSelector">Function to apply to each group of elements</param>
+		public static IEnumerable<TResult> Zip<<#WriteGenericVarNames(count);#>TResult>(this <#WriteParamSigNames(count);#> Func<<#WriteGenericVarNames(count);#>int, TResult> resultSelector)
+        {
+			return ZipShortest(<#WriteParamNames(count);#>resultSelector);
+        }
+<#}#>
+	}
+}
+
+<#+
+void WriteGenericVarNames(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		Write("T{0}, ", NumberToOrdinalText(i));
+	}
+}
+
+void WriteParamSigNames(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		Write("IEnumerable<T{0}> {1}, ", NumberToOrdinalText(i), NumberToOrdinalText(i).ToLower());
+	}
+}
+
+void WriteParamNames(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		Write("{0}, ", NumberToOrdinalText(i).ToLower());
+	}
+}
+
+void WriteParamContracts(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		WriteLine("			{0}.ThrowIfNull(\"{0}\");", NumberToOrdinalText(i).ToLower());
+	}
+}
+
+void WriteParamUsings(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		WriteLine("			using (var e{0} = {1}.GetEnumerator())", i, NumberToOrdinalText(i).ToLower());
+	}
+}
+
+void WriteVarDecls(int count)
+{
+	for (int i = 1; i <= count; i++) { 
+		WriteLine("			    T{0} v{1} = default(T{0});", NumberToOrdinalText(i), i);
+	}
+}
+
+void WriteVars(int count)
+{
+	var varNames = new string[count];
+	for (int i = 0; i < count; i++) { 
+		varNames[i] ="v" + (i+1);
+	}
+	Write(string.Join(", ", varNames));
+}
+
+#>

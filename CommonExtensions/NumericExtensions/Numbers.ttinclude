@@ -1,0 +1,155 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ 
+/**********************************************************************************************************************
+  These utility methods and values are used in other templates to make it easier to templatize over numeric types
+  and over variable numbers of things (parameters, type parameters, etc) with nice looking comments.
+**********************************************************************************************************************/
+
+public class NumericInfo { 
+    public string Name{get;set;} 
+    public int Size{get;set;} 
+    public NumericInfo(string name, int size) { 
+        this.Name = name;
+        this.Size = size;
+    }
+}
+
+/// <summary>A list of all built-in numeric types for creating general purpose numeric type extension methods.</summary>
+static NumericInfo[] Numerics = new[] {
+    new NumericInfo(typeof(SByte).Name, sizeof(SByte) * 8),
+    new NumericInfo(typeof(Int16).Name, sizeof(Int16) * 8),
+    new NumericInfo(typeof(Int32).Name, sizeof(Int32) * 8),
+    new NumericInfo(typeof(Int64).Name, sizeof(Int64) * 8),
+    new NumericInfo(typeof(Byte).Name, sizeof(Byte) * 8),
+    new NumericInfo(typeof(UInt16).Name, sizeof(UInt16) * 8),
+    new NumericInfo(typeof(UInt32).Name, sizeof(UInt32) * 8),
+    new NumericInfo(typeof(UInt64).Name, sizeof(UInt64) * 8),
+    new NumericInfo(typeof(Single).Name, sizeof(Single) * 8),
+    new NumericInfo(typeof(Double).Name, sizeof(Double) * 8),
+    new NumericInfo(typeof(Decimal).Name, sizeof(Decimal) * 8)
+};
+
+/// <summary>Is the type a signed type?</summary>
+/// <param name="type">The short name of the type.</param>
+static bool IsSigned(string type) {
+    switch (type) {
+        case "Byte":
+        case "UInt16":
+        case "UInt32":
+        case "UInt64":
+            return false;
+        default:
+            return true;
+    }
+}
+
+/// <summary>Is the type an integral type?</summary>
+/// <param name="type">The short name of the type.</param>
+static bool IsIntegral(string type) {
+    switch (type) {
+        case "Single":
+        case "Double":
+        case "Decimal":
+            return false;
+        default:
+            return true;
+    }
+}
+
+/// <summary>The English word for each number from 0 to 20, indexed on their numeric representation.</summary>
+static string[] Numbers = new[] {"Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty" };
+/// <summary>The English word for each number from 0 to 90 in steps of ten, indexed on the numeric representation of the 10s place.</summary>
+static string[] NumbersByTen = new[] { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+/// <summary>The English word for each number from 10e2 to 10e15.</summary>
+static string[] PowersOfTen = new[] {"Hundred", "Thousand", "Million", "Billion", "Trillion", "Quadrillion" };//, "Quintillion", "Sextillion", "Septillion", "Octillion" };
+
+/// <summary>Converts an integer into its English language representation.</summary>
+/// <param name="num">The number to convert.</param>
+/// <returns>The English language representation of the number.</returns>
+static string NumberToText(int num)
+{
+    if (num == 0) return Numbers[num];
+    else if (num < 0) return "Negative " + NumberToText(Math.Abs(num));
+
+    string text = string.Empty;
+
+    for (int i = PowersOfTen.Length-1; i >= 0; i--)
+    {
+        double power;
+        if (i == 0) power = 100;
+        else power = Math.Pow(10, i*3);
+        
+        if (int.MaxValue < power) continue;
+
+        if ((num / (int)power) > 0)
+        {
+            text += NumberToText(num / (int)power) + " " + PowersOfTen[i] + " ";
+            num %= (int)power;
+        }
+    }
+
+    if (num > 0) 
+    {
+        if (text != "") text += "and ";
+        
+        if (num < 20)
+            text += Numbers[num];
+        else 
+        {
+            text += NumbersByTen[num/10];
+            if ((num %= 10) > 0) text += "-" + Numbers[num];
+        }
+    }
+    return text.Trim();
+}
+
+/// <summary>Converts an integer into the English language representation of its ordinal form.</summary>
+/// <param name="num">The number to convert.</param>
+/// <returns>The English language representation of the number in ordinal form.</returns>
+static string NumberToOrdinalText(int num)
+{
+    string text = NumberToText(num);
+    if(text.EndsWith("One"))
+        return text.Substring(0, text.Length-3) + "First";
+    else if(text.EndsWith("Two"))
+        return text.Substring(0, text.Length-3) + "Second";
+    else if(text.EndsWith("Three"))
+        return text.Substring(0, text.Length-5) + "Third";
+    else if(text.EndsWith("ve"))
+        return text.Substring(0, text.Length-2) + "fth";
+    else if(text.EndsWith("e"))
+        return text.Substring(0, text.Length-1) + "th";
+    else if(text.EndsWith("y"))
+        return text.Substring(0, text.Length-1) + "ieth";
+    else if(text.EndsWith("t"))
+        return text + "h";
+    else
+        return text + "th";
+}
+
+/// <summary>Converts an integer into its representation as an ordinal.</summary>
+/// <param name="num">The number to convert.</param>
+/// <returns>The ordinal form of the number.</returns>
+static string NumberToOrdinal(int num)
+{ 
+    switch (num % 100)
+    {
+        case 11:
+        case 12:
+        case 13:
+            return num.ToString() + "th";
+    }
+
+    switch (num % 10)
+    {
+        case 1:
+            return num.ToString() + "st";
+        case 2:
+            return num.ToString() + "nd";
+        case 3:
+            return num.ToString() + "rd";
+        default:
+            return num.ToString() + "th";
+    }
+}
+#>
